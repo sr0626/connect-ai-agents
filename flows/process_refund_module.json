@@ -1,0 +1,121 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "ca526c40-7cb6-4c0f-8a74-bbc2a1a0a618",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "ca526c40-7cb6-4c0f-8a74-bbc2a1a0a618": {
+        "position": {
+          "x": 232.8,
+          "y": 76
+        },
+        "parameters": {
+          "LambdaFunctionARN": {
+            "displayName": "connect-nova-sonic-process_refund"
+          },
+          "LambdaInvocationAttributes": {
+            "order_id": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicMetadata": {
+          "order_id": true
+        }
+      },
+      "97cd82f9-9371-4d59-8165-601bb2549fe5": {
+        "position": {
+          "x": 544,
+          "y": 96.8
+        },
+        "parameters": {
+          "ResultData": {
+            "useDynamic": true
+          }
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "process_refund_module",
+    "description": "This tool processes refund for an existing order",
+    "status": "published",
+    "settings": {
+      "input": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "resultData": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      }
+    },
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123456789012:function:connect-nova-sonic-process_refund",
+        "InvocationTimeLimitSeconds": "3",
+        "InvocationType": "SYNCHRONOUS",
+        "LambdaInvocationAttributes": {
+          "order_id": "$.Modules.Input.order_id"
+        },
+        "ResponseValidation": {
+          "ResponseType": "JSON"
+        }
+      },
+      "Identifier": "ca526c40-7cb6-4c0f-8a74-bbc2a1a0a618",
+      "Type": "InvokeLambdaFunction",
+      "Transitions": {
+        "NextAction": "97cd82f9-9371-4d59-8165-601bb2549fe5",
+        "Errors": [
+          {
+            "NextAction": "97cd82f9-9371-4d59-8165-601bb2549fe5",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ResultData": "$.Modules.Result"
+      },
+      "Identifier": "97cd82f9-9371-4d59-8165-601bb2549fe5",
+      "Type": "EndFlowModuleExecution",
+      "Transitions": {}
+    }
+  ],
+  "Settings": {
+    "InputParameters": [],
+    "OutputParameters": [],
+    "Transitions": [
+      {
+        "DisplayName": "Success",
+        "ReferenceName": "Success",
+        "Description": ""
+      },
+      {
+        "DisplayName": "Error",
+        "ReferenceName": "Error",
+        "Description": ""
+      }
+    ]
+  }
+}

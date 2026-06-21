@@ -1,0 +1,32 @@
+# Copy to terraform.tfvars and adjust.
+
+region                 = "us-west-2"
+project                = "connect-nova-sonic"
+connect_instance_alias = "connect-nova-sonic-demo" # must be globally unique
+agent_name             = "Amplifier"
+company_name           = "Amplify Total Experience"
+phone_country_code     = "US" # phone claiming is commented out in connect.tf
+lambda_runtime         = "python3.12"
+
+# CMK used for all encryption at rest (DynamoDB, Lambda env, CloudWatch Logs).
+kms_key_arn = "arn:aws:kms:us-west-2:<account-id>:key/<your-kms-key-id>"
+
+# Connect users + REQUIRED shared password (8-64 chars, upper/lower/number).
+# Set a strong password here in your real terraform.tfvars (this file is a template).
+admin_username        = "demo.admin"
+admin_email           = "demo.admin@example.com"
+agent_username        = "demo.agent"
+agent_email           = "demo.agent@example.com"
+connect_user_password = "CHANGE-ME-To-A-Strong-One1"
+
+# Override the seeded sample orders if you like (see variables.tf for shape).
+# seed_orders = {
+#   "ORD-2001" = {
+#     customer_name  = "Alex Doe"
+#     customer_phone = "+12065550199"
+#     status         = "shipped"
+#     item           = "Smart Watch"
+#     amount         = 199.00
+#     refundable     = true
+#   }
+# }

@@ -1,0 +1,135 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "order_lookup",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "746e7412-e065-4442-8130-c73510ee9475": {
+        "position": {
+          "x": 455.2,
+          "y": 64
+        },
+        "parameters": {
+          "ResultData": {
+            "useDynamic": true
+          }
+        }
+      },
+      "order_lookup": {
+        "position": {
+          "x": 189.6,
+          "y": 36
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "LambdaFunctionARN": {
+            "displayName": "connect-nova-sonic-order_lookup"
+          },
+          "LambdaInvocationAttributes": {
+            "order_id": {
+              "useDynamic": true
+            },
+            "customer_phone": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicMetadata": {
+          "order_id": true,
+          "customer_phone": true
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "order_lookup_module",
+    "description": "This tool retrieves an existing order",
+    "status": "published",
+    "settings": {
+      "input": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string"
+            },
+            "customer_phone": {
+              "type": "string"
+            }
+          },
+          "required": []
+        }
+      },
+      "resultData": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "required": []
+        }
+      },
+      "transitions": {
+        "results": []
+      }
+    },
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "ResultData": "$.Modules.Result"
+      },
+      "Identifier": "746e7412-e065-4442-8130-c73510ee9475",
+      "Type": "EndFlowModuleExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123456789012:function:connect-nova-sonic-order_lookup",
+        "InvocationTimeLimitSeconds": "3",
+        "InvocationType": "SYNCHRONOUS",
+        "LambdaInvocationAttributes": {
+          "order_id": "$.Modules.Input.order_id",
+          "customer_phone": "$.Modules.Input.customer_phone"
+        },
+        "ResponseValidation": {
+          "ResponseType": "JSON"
+        }
+      },
+      "Identifier": "order_lookup",
+      "Type": "InvokeLambdaFunction",
+      "Transitions": {
+        "NextAction": "746e7412-e065-4442-8130-c73510ee9475",
+        "Errors": [
+          {
+            "NextAction": "746e7412-e065-4442-8130-c73510ee9475",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    }
+  ],
+  "Settings": {
+    "InputParameters": [],
+    "OutputParameters": [],
+    "Transitions": [
+      {
+        "DisplayName": "Success",
+        "ReferenceName": "Success",
+        "Description": ""
+      },
+      {
+        "DisplayName": "Error",
+        "ReferenceName": "Error",
+        "Description": ""
+      }
+    ]
+  }
+}

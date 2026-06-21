@@ -1,0 +1,19 @@
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/.build/
+*.tfstate
+*.tfstate.*
+terraform/terraform.tfvars
+crash.log
+
+# Wiring-script state
+scripts/.state.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Local editor / personal scratch (Notes.txt has logins + a real phone number)
+.claude/settings.local.json
+Notes.txt
