@@ -242,9 +242,13 @@ Terraform; the knowledge base + tool wiring is console.
    isn't associated/ready yet — go back to step 1/2.)
 4. **Grant the permission** so `Retrieve` shows *Sufficient*, not *Insufficient*: the Knowledge Base
    `Retrieve` tool needs **Connect assistant – View Access**. Users → Security profiles →
-   `amplifier-agent-tools` → enable **Contact Control Panel / Amazon Q (Connect assistant) → View**
-   (the *Connect assistant – View Access* permission) → Save. (This is the exact permission that made
-   `Retrieve` show *Insufficient* during initial setup, when no KB existed.)
+   `amplifier-agent-tools` → **Agent Applications** section → enable **View** on the **Connect
+   assistant** entry (labeled **Amazon Q** / **Connect AI agents** in some console versions) → Save.
+   ⚠️ It is under **Agent Applications**, NOT *Contact Control Panel* (CCP is the human-agent desktop;
+   AI-agent/Retrieve access is not there). Grant it on the security profile actually assigned to the
+   Orchestration agent (AI agent edit page → Security Profiles), and test as a real Connect user — not
+   emergency access. (This is the exact permission that made `Retrieve` show *Insufficient* during
+   initial setup, when no KB existed.)
 5. **Instruct the agent** (the `Retrieve` tool's **Instructions** field) to use it for **policy and
    general questions** — return windows, refund eligibility rules, shipping/restocking fees,
    non-returnable items — and to keep using `order_lookup` / `process_refund` for actions on a
