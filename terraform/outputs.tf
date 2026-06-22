@@ -68,3 +68,19 @@ output "tool_lambda_arns" {
   description = "ARNs of the order-lookup and refund tool Lambdas."
   value       = { for k, fn in aws_lambda_function.tool : k => fn.arn }
 }
+
+# --- Knowledge-base source (policy Q&A enhancement) --------------------------
+output "kb_bucket_name" {
+  description = "S3 bucket holding the return/refund policy document for the knowledge base."
+  value       = aws_s3_bucket.kb.bucket
+}
+
+output "kb_object_key" {
+  description = "Key of the policy document within the KB bucket."
+  value       = aws_s3_object.policy_doc.key
+}
+
+output "kb_s3_uri" {
+  description = "Full s3:// URI to give the Q-in-Connect knowledge base S3 source."
+  value       = "s3://${aws_s3_bucket.kb.bucket}/${aws_s3_object.policy_doc.key}"
+}

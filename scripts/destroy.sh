@@ -63,10 +63,35 @@ if aws qconnect help >/dev/null 2>&1; then
       log "Deleted AI prompt $id"
     done
 
+    # Detach any knowledge base associated to the assistant (the policy-Q&A KB
+    # from RUNBOOK §7), else delete-assistant fails. The KB itself is account-
+    # level (deleted further below); here we just remove the association.
+    kb_assoc_ids="$(AWSCLI qconnect list-assistant-associations --assistant-id "$assistant_id" \
+      --query 'assistantAssociationSummaries[].assistantAssociationId' --output text 2>/dev/null || true)"
+    for id in $kb_assoc_ids; do
+      AWSCLI qconnect delete-assistant-association \
+        --assistant-id "$assistant_id" --assistant-association-id "$id" || true
+      log "Removed assistant association $id"
+    done
+
     AWSCLI qconnect delete-assistant --assistant-id "$assistant_id" || true
     log "Deleted assistant $assistant_id"
   else
     log "No Q-in-Connect assistant found (nothing to delete)."
+  fi
+
+  # Delete the policy-Q&A knowledge base(s) — account-level (RUNBOOK §7), so
+  # handled independently of the assistant. Named like the project; safe no-op
+  # if none exist. (The S3 bucket + document are Terraform-managed and removed
+  # by the terraform destroy below.)
+  if [ -n "$PROJECT_NAME" ]; then
+    kb_ids="$(AWSCLI qconnect list-knowledge-bases \
+      --query "knowledgeBaseSummaries[?contains(name, '${PROJECT_NAME}')].knowledgeBaseId" \
+      --output text 2>/dev/null || true)"
+    for id in $kb_ids; do
+      AWSCLI qconnect delete-knowledge-base --knowledge-base-id "$id" || true
+      log "Deleted knowledge base $id"
+    done
   fi
 fi
 

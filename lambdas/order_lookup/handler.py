@@ -2,7 +2,9 @@
 
 Invoked by Amazon Connect (AI agent flow-module tool / "Invoke Lambda function"
 block). Accepts an order id and/or the caller's phone number and returns the
-order status from DynamoDB.
+order status from DynamoDB. When neither is given (e.g. the caller says "use my
+number" / "use the caller ID"), it falls back to the caller's own calling number
+(ANI) taken from the contact event — no flow wiring needed.
 
 IMPORTANT: responses are kept FLAT (top-level string key/values) — Connect's
 flow-module / AI-agent tool layer reliably passes flat scalar fields but drops
@@ -56,6 +58,20 @@ def _normalize_phone(raw):
     if len(digits) == 11 and digits.startswith("1"):
         return "+" + digits          # 1 + 10 digits
     return "+" + digits              # fallback
+
+
+def _caller_ani(event):
+    """The caller's own number (ANI) from the Connect contact event, if present.
+
+    Connect puts the calling number at
+    event["Details"]["ContactData"]["CustomerEndpoint"]["Address"] (E.164, e.g.
+    "+12146817675"). Returns "" when absent (e.g. a direct/test invocation).
+    """
+    try:
+        addr = event["Details"]["ContactData"]["CustomerEndpoint"]["Address"]
+    except (KeyError, TypeError):
+        return ""
+    return _normalize_phone(addr or "")
 
 
 def _normalize_order_id(raw):
@@ -117,25 +133,37 @@ def _do_lookup(event):
         return flat
 
     # Otherwise list the caller's orders by phone number (flattened to a summary).
-    if phone_raw:
-        phone = _normalize_phone(phone_raw)
+    # An explicitly given number wins; if none is usable (blank, or a non-numeric
+    # phrase like "my number" / "caller ID" that normalizes to empty), fall back
+    # to the caller's own calling number (ANI) from the contact event.
+    phone = _normalize_phone(phone_raw) if phone_raw else ""
+    used_ani = False
+    if not phone:
+        phone = _caller_ani(event)
+        used_ani = bool(phone)
+
+    if phone:
         resp = _TABLE.query(
             IndexName=_GSI,
             KeyConditionExpression=Key("customer_phone").eq(phone),
         )
         items = resp.get("Items", [])
+        whose = "your calling number" if used_ani else phone
         if not items:
-            return {"found": "false", "message": f"No orders found for {phone}."}
+            return {"found": "false", "message": f"No orders found for {whose}."}
         parts = [
             f"{o.get('order_id')} ({o.get('item')}, {o.get('status')}, "
             f"{o.get('amount')} dollars)"
             for o in items
         ]
+        lead = f"Found {len(items)} order(s)"
+        lead += " for your calling number" if used_ani else ""
         return {
             "found": "true",
             "count": str(len(items)),
             "customer_name": str(items[0].get("customer_name", "")),
-            "message": f"Found {len(items)} order(s): " + "; ".join(parts) + ".",
+            "used_caller_id": "yes" if used_ani else "no",
+            "message": lead + ": " + "; ".join(parts) + ".",
         }
 
     return {

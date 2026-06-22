@@ -123,12 +123,13 @@ Admin site → **AI agent designer → AI agents → Create AI agent**:
 
 1. Type **Orchestration**; **Copy from existing → `SelfServiceOrchestratorVoice`** (the **Voice**
    variant — for a phone/Nova Sonic experience; there's also `SelfServiceOrchestratorChat`). Gives
-   default `Complete` + `Escalate` Return-to-Control tools (plus a `Retrieve` knowledge-base tool to
-   remove) and the orchestration prompt.
+   default `Complete` + `Escalate` Return-to-Control tools (plus a `Retrieve` knowledge-base tool —
+   removed here, then re-added in §7 once the knowledge base exists) and the orchestration prompt.
 2. Name it `Amplifier` (the project `agent_name`).
 3. **Add tools** → **Add existing AI Tool** → Namespace **Flow Modules** → add the two flow-module
    tools from §3 (they only appear here once each module has a published **version** — see §3 step
-   5). Keep the default `Complete` / `Escalate`; remove `Retrieve` (no knowledge base in this POC).
+   5). Keep the default `Complete` / `Escalate`; remove `Retrieve` for now (no KB yet — it's re-added
+   in **§7** for policy Q&A once the knowledge base is created).
    Also grant each module **Access** in the security profile's **Flow modules** section (Users →
    Security profiles → your profile → Flow modules) so the agent's tool permission shows
    *Sufficient*, not *Insufficient*. Note: emergency-access (console) login is profile-less and
@@ -194,6 +195,72 @@ Block-by-block notes (the console specifics that aren't obvious):
 Then associate the flow with a phone number under **Channels → Phone numbers** (the Terraform DID
 claim is commented out — claim manually; small recurring + usage cost). To validate *without* a
 number first, use the **bot Test panel** (text) to exercise the agent + tools for free.
+
+## 7. Knowledge base — policy Q&A from S3  (enhancement)
+
+Lets Amplifier answer free-form **return / refund policy** questions ("what's your return window?",
+"are opened items refundable?", "is there a restocking fee?") using the built-in **`Retrieve`** tool
+against a knowledge base — no new Lambda. The policy document and its S3 source are managed by
+Terraform; the knowledge base + tool wiring is console.
+
+**Terraform provides (already applied):**
+- `docs/return-refund-policy.pdf` — the generic policy document (regenerate from
+  `docs/return-refund-policy.txt` with `cupsfilter return-refund-policy.txt > return-refund-policy.pdf`).
+- An S3 bucket + the uploaded PDF (`terraform/s3-kb.tf`). Get the source location:
+  `terraform -chdir=terraform output kb_s3_uri`
+  → `s3://connect-nova-sonic-demo-kb-<account-id>/policies/return-refund-policy.pdf`.
+  (SSE-S3, not the CMK — see the note in `s3-kb.tf`.)
+
+**Console steps:**
+1. **Create the knowledge base on the existing Q-in-Connect domain.** This is in the **AWS Management
+   Console**, *not* the `.my.connect.aws` admin website. The KB is created as an **integration on the
+   domain** (`connect-nova-sonic-demo-assistant` — the assistant the agent already uses; see
+   *Terminology*). The domain already exists, so skip "Add domain" and go straight to **Add integration**:
+   - AWS console → **Amazon Connect** → click your instance (`connect-nova-sonic-demo`).
+   - Left nav → **AI Agents** → **Add integration** → **Create a new integration**.
+   - **Source** → **Amazon Simple Storage Service (S3)**.
+   - Under **Connection with S3**, paste the **bucket** URI (not a single-object key) — e.g.
+     `s3://connect-nova-sonic-demo-kb-<account-id>` (or `.../policies/` to scope to the prefix) — or
+     **Browse S3** and pick the bucket. The integration ingests the supported files it finds under
+     there. (`terraform output kb_s3_uri` points at the exact object — handy for `aws s3 ls`
+     verification, but give the integration the bucket/prefix, not that full object URI.)
+   - **Encryption** → default (AWS owned key) is fine for the POC → **Next** → review → **Add integration**.
+   - Supported content: HTML, DOCX, PDF (not encrypted/password-protected, no embedded scripts), or
+     UTF-8 text, ≤ 1 MB — our generated PDF qualifies.
+   - **Bucket access is already handled:** `terraform/s3-kb.tf` attaches a bucket policy granting the
+     `app-integrations.amazonaws.com` principal `s3:GetObject` / `GetBucketLocation` / `ListBucket`
+     (Q in Connect ingests S3 via AWS AppIntegrations). SSE-S3 (not the CMK) keeps it readable without
+     a KMS grant. If you ever switch the bucket to a CMK, also grant that principal `kms:Decrypt`.
+2. **Sync / ingest** the source and wait until the document shows **indexed** (a minute or two for one
+   small PDF). Until it's indexed, `Retrieve` returns nothing and the agent will say it can't find a
+   policy.
+3. **Re-add the `Retrieve` tool to Amplifier** (it was removed in §4). AI agent designer → **Amplifier**
+   → **Add tools → Add existing AI Tool → Namespace `Amazon Connect` → `Retrieve`**. The tool config
+   has a **required `Assistant Association`** field — "Select a knowledge base association to configure
+   the retrieval source." Pick the single association shown; its sub-line **`Connect Knowledge Base ID:
+   <id>`** confirms it points at the policy KB you made in step 1. (If that dropdown is *empty*, the KB
+   isn't associated/ready yet — go back to step 1/2.)
+4. **Grant the permission** so `Retrieve` shows *Sufficient*, not *Insufficient*: the Knowledge Base
+   `Retrieve` tool needs **Connect assistant – View Access**. Users → Security profiles →
+   `amplifier-agent-tools` → enable **Contact Control Panel / Amazon Q (Connect assistant) → View**
+   (the *Connect assistant – View Access* permission) → Save. (This is the exact permission that made
+   `Retrieve` show *Insufficient* during initial setup, when no KB existed.)
+5. **Instruct the agent** (the `Retrieve` tool's **Instructions** field) to use it for **policy and
+   general questions** — return windows, refund eligibility rules, shipping/restocking fees,
+   non-returnable items — and to keep using `order_lookup` / `process_refund` for actions on a
+   specific order. e.g. *"Use Retrieve to answer questions about return and refund policy. Quote the
+   policy; do not invent terms. For looking up or refunding a specific order, use the order tools."*
+6. **Publish** the agent. (Unlike flow-module tools, `Retrieve` is a built-in tool and does **not**
+   pin a module version — no re-point needed; just Publish.) Confirm **Self Service** default still
+   points at Amplifier / Latest (§4.7).
+7. **Test** — bot **Test panel** (text, free) first, then a live call: ask *"What is your return
+   window?"* (→ 30 days), *"Are opened items refundable?"* (→ yes within 30 days if undamaged/complete),
+   *"Is there a restocking fee?"* (→ up to 15% on opened large electronics / no original packaging).
+   The orchestrator should call `Retrieve` and answer from the document, and still handle
+   order/refund requests via the existing tools.
+
+**Updating the document later:** edit `docs/return-refund-policy.txt` → regenerate the PDF → `terraform
+apply` (uploads a new object version) → **re-sync** the knowledge base in the console so it re-ingests.
 
 ## Escalation semantics
 

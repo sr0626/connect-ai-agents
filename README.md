@@ -1,13 +1,15 @@
 # Amazon Connect + Nova Sonic — agentic self-service AI agent
 
 An inbound voice line where an **Amazon Nova Sonic** speech-to-speech AI agent ("Amplifier") greets
-the caller, **looks up an order** (by order ID or phone number), **processes a refund**, and
+the caller, **looks up an order** (by order ID, phone number, or the **caller's own number**),
+**processes a refund**, **answers return/refund policy questions** from a knowledge base, and
 **escalates to a live agent** — built on Amazon Connect's next-gen **agentic self-service** (an
-Orchestration AI agent calling **MCP tools**).
+Orchestration AI agent calling **MCP tools** plus a **`Retrieve`** knowledge-base tool).
 
-> ✅ **Status:** working end to end over a real phone call — order lookup (by ID and by phone),
-> refunds (with idempotency + eligibility), and escalation. The full setup and the hard-won gotchas
-> are in **[docs/RUNBOOK.md](docs/RUNBOOK.md)** — read it before reproducing.
+> ✅ **Status:** working end to end over a real phone call — order lookup (by ID, by phone, and by
+> caller ID), refunds (with idempotency + eligibility), policy Q&A from a knowledge base, and
+> escalation. The full setup and the hard-won gotchas are in **[docs/RUNBOOK.md](docs/RUNBOOK.md)** —
+> read it before reproducing.
 
 ## Architecture
 
@@ -28,13 +30,15 @@ yet:
   escalate-intent model, not the agentic `Tool`-attribute model).
 
 ```
-terraform/   IaC for all natively-supported infra
+terraform/   IaC for all natively-supported infra (incl. s3-kb.tf — the knowledge-base bucket)
 flows/       connect-nova-sonic-inbound-ai-agent.json  (exported, canonical flow — source of truth)
              inbound-ai-agent.json.tpl / inbound-skeleton.json.tpl  (STALE legacy templates)
-lambdas/     order_lookup, process_refund (Python 3.12) — FLAT responses + a spoken `message`
+lambdas/     order_lookup (ID / phone / caller-ID), process_refund (Python 3.12) — FLAT responses
+             + a spoken `message`
 prompts/     agent-instructions.md (persona / orchestration-prompt reference)
 scripts/     deploy.sh, 10..40 (partial/legacy), destroy.sh, lib.sh
-docs/        RUNBOOK.md (build guide + lessons learned), FUTURE-ENHANCEMENTS.md
+docs/        RUNBOOK.md (build guide + lessons learned), FUTURE-ENHANCEMENTS.md,
+             return-refund-policy.pdf/.txt (knowledge-base source doc)
 ```
 
 ## Prerequisites
@@ -60,7 +64,11 @@ docs/        RUNBOOK.md (build guide + lessons learned), FUTURE-ENHANCEMENTS.md
    wire the flow. The RUNBOOK documents every non-obvious step (the ones that cost real time, e.g.
    flow-module **versions**, mapping the Lambda response from **`$.External`**, and re-pointing the
    agent tool to the new module version).
-3. **Claim a phone number** and set the inbound flow `connect-nova-sonic-inbound-ai-agent` on it.
+3. **(Optional) Policy Q&A** — RUNBOOK **§7**: create a knowledge base on the domain from the
+   Terraform-provisioned S3 bucket, re-add the `Retrieve` tool, grant *Connect assistant – View
+   Access*, and instruct the agent. (Caller-ID lookup needs no extra setup — it's in the
+   `order_lookup` Lambda; just keep the caller-ID clause in the tool's Instructions.)
+4. **Claim a phone number** and set the inbound flow `connect-nova-sonic-inbound-ai-agent` on it.
 
 ## Test
 
@@ -69,9 +77,13 @@ docs/        RUNBOOK.md (build guide + lessons learned), FUTURE-ENHANCEMENTS.md
 
 1. *"What's the status of order ORD-1001?"* → reads the status.
 2. *"How many orders for my phone, 214 681 7675?"* → lists the caller's orders.
-3. *"I'd like a refund for ORD-2003."* → confirms, processes it (sets `status=refunded`,
+3. *"Look up my orders."* → agent asks *"use the number you're calling from, or a different one?"* →
+   on "use mine" it looks up by your **caller ID** (`+12146817675` → `ORD-2001…2004`).
+4. *"I'd like a refund for ORD-2003."* → confirms, processes it (sets `status=refunded`,
    `refundable=false`); *"Refund ORD-2002"* → "not eligible"; repeat → "already refunded".
-4. *"Can I talk to a person?"* → transfers to the escalation queue.
+5. *"What's your return window?"* / *"Are opened items refundable?"* → answers from the **knowledge
+   base** (return window 30 days, opened items refundable if undamaged, etc.).
+6. *"Can I talk to a person?"* → transfers to the escalation queue.
 
 Quick Lambda checks without calling:
 ```bash
@@ -86,15 +98,17 @@ aws lambda invoke --region us-west-2 --function-name connect-nova-sonic-process_
 
 ## Roadmap
 
-See **[docs/FUTURE-ENHANCEMENTS.md](docs/FUTURE-ENHANCEMENTS.md)**: knowledge-base / policy Q&A
-(re-add the `Retrieve` tool + a KB) and ANI auto-detect (use the caller's number automatically).
+Knowledge-base policy Q&A and caller-ID lookup are **done** (see RUNBOOK §7 and the `order_lookup`
+Lambda). Remaining ideas — a "debugging a call" observability doc, an order-cancellation tool, and a
+multi-document knowledge base — are in **[docs/FUTURE-ENHANCEMENTS.md](docs/FUTURE-ENHANCEMENTS.md)**.
 
 ## Teardown
 
 ```bash
 ./scripts/destroy.sh
 ```
-Best-effort deletes the Q-in-Connect assistant/integration, then `terraform destroy`. The
+Best-effort deletes the Q-in-Connect assistant, the knowledge base + its association, and the
+instance integration, then `terraform destroy` (which also removes the KB S3 bucket). The
 console-created bot, AI agent, flow modules, and any claimed phone number must be removed manually.
 
 ## Cost note
