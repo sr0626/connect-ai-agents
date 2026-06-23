@@ -96,10 +96,17 @@ aws lambda invoke --region us-west-2 --function-name connect-nova-sonic-process_
 > `terraform apply` re-seeds the orders table, so any refunds processed during testing reset on the
 > next apply.
 
+## Debugging a call
+
+To reconstruct what happened on a call — which tool the agent invoked, with what input, and why it
+escalated — see **[docs/RUNBOOK.md §8 "Observability"](docs/RUNBOOK.md)**: a layered guide from Contact
+search → AI agent trace/transcript (Contact Lens) → flow logs → the Lambda `EVENT/PARAMS/RESULT` logs,
+with a symptom→layer triage table.
+
 ## Roadmap
 
-Knowledge-base policy Q&A and caller-ID lookup are **done** (see RUNBOOK §7 and the `order_lookup`
-Lambda). Remaining ideas — a "debugging a call" observability doc, an order-cancellation tool, and a
+Knowledge-base policy Q&A, caller-ID lookup, and the observability/debugging guide are **done** (see
+RUNBOOK §7–§8 and the `order_lookup` Lambda). Remaining ideas — an order-cancellation tool and a
 multi-document knowledge base — are in **[docs/FUTURE-ENHANCEMENTS.md](docs/FUTURE-ENHANCEMENTS.md)**.
 
 ## Teardown

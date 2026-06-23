@@ -266,6 +266,89 @@ Terraform; the knowledge base + tool wiring is console.
 **Updating the document later:** edit `docs/return-refund-policy.txt` → regenerate the PDF → `terraform
 apply` (uploads a new object version) → **re-sync** the knowledge base in the console so it re-ingests.
 
+## 8. Observability — debugging a call
+
+> ⚠️ **Draft — not yet end-to-end validated.** Layers 3–4 (flow logs, Lambda `EVENT/PARAMS/RESULT`)
+> are from our own build; Layers 1–2 (Contact search, Contact Lens AI agent trace/transcript) are
+> written from a parallel debugging session and AWS docs but haven't been re-walked on this instance.
+> Verify the exact menu labels and the Contact Lens prerequisites before relying on it.
+
+How to reconstruct what happened on a call, from the spoken conversation down to the exact tool call.
+Work the layers from the outside in — most issues are answered by the first two.
+
+### Layer 1 — Contact search (first triage)
+Admin site → **Analytics → Contact search** → filter by time / phone number → open the contact.
+The **Contact details** page gives you, with zero extra setup:
+- **Timestamps** and the **Customer endpoint** (the caller's ANI) / **System endpoint** (the dialed DID).
+- An **AI agent** section: the **Self Service** agent that ran (name + **Version ID**) and **Escalated to
+  human: true/false**.
+
+This alone answers "which agent version ran?" and "did it escalate?" — the two questions you ask first.
+
+### Layer 2 — Transcript + AI agent trace (the richest signal)
+This is where you see **which tool the agent called, with what input, and what it returned/errored** —
+the single most useful view for "it escalated" or "I'm having trouble" symptoms. It requires **Contact
+Lens conversational analytics**, which the base POC ships with **off**, so enable it when debugging:
+
+1. In the flow, add a **Set recording and analytics behavior** block (channel **Voice**):
+   - **Enable conversational analytics → On**, set to **Real-time** (AWS requires real-time for AI
+     agents on voice), **Language** = English (US).
+   - **Enable recording → Automated interaction: On** — the "automated interaction" is the
+     **self-service / AI-agent leg** (vs "Agent and customer", the human leg after escalation).
+   - **Save → Publish** the flow.
+2. The instance also needs **call-recording S3 storage** (AWS console → instance → **Data storage →
+   Call recordings**) or Contact Lens has nowhere to write and you'll see *no* transcript.
+3. Make a test call, wait ~1–2 min after disconnect (post-call processing), then reopen the contact:
+   - **Transcript** of the self-service conversation.
+   - **AI agent trace** — each tool invocation with its **input, output, and any error string**
+     (e.g. a `Retrieve` `AccessDeniedException`, or `order_lookup` returning `found=false`).
+
+**Read the pattern, not just the words:** a tool error → the model says *"I'm having trouble…"* →
+**Escalate**. The escalation is the model behaving *correctly* in response to a tool-layer failure — so
+don't debug the prompt; debug the tool the trace shows failing.
+
+### Layer 3 — Flow logs (routing / module invocation)
+CloudWatch → Log groups → **`/aws/connect/connect-nova-sonic-demo`** (the instance alias). Populated by
+the flow's **Set logging behavior** block (already in the flow). Block-by-block execution, including:
+- `GetUserInput` resolving to **`Amazonqinconnect`** (control handed to the AI agent),
+- the **`CheckAttribute`** on session attribute **`Tool`** (`Complete` / `Escalate`) — your routing,
+- **`ContactFlowModuleType: InvokeExternalResource`** with **`ExternalResults: {…}`** — the flow-module
+  tool's Lambda response as the flow saw it.
+
+Use this for "did it route to the right branch / queue?" and "what did the module actually return?".
+
+### Layer 4 — Lambda logs (tool ground truth)
+CloudWatch → **`/aws/lambda/connect-nova-sonic-order_lookup`** and **`…-process_refund`**. Both handlers
+log three lines per call:
+- **`EVENT`** — the full event (incl. the caller's ANI at `Details.ContactData.CustomerEndpoint.Address`),
+- **`PARAMS`** — the exact arguments the agent passed (the key+value, after normalization),
+- **`RESULT`** — what the tool returned.
+
+**Live Tail** the log group during a test call to watch in real time. This is the ground truth for
+"the agent called the tool but says it found nothing" — `PARAMS`/`RESULT` show whether it was a bad
+argument, a normalization miss, or genuinely no data.
+
+### Layer 5 — Lex conversation logs (optional, deepest)
+Enable on the **bot alias** (`TestBotAlias`) → CloudWatch/S3 for raw bot-turn handling. Rarely needed on
+the agentic path, but available if Layers 1–4 don't explain it.
+
+### Triage cheat-sheet (symptom → layer)
+| Symptom | Look at |
+|---|---|
+| "It escalated" / "I'm having trouble" | **Layer 2** — which tool errored + the error string |
+| Agent got data but didn't read it / wrong args | **Layer 4** — `PARAMS` / `RESULT` |
+| Wrong queue / transfer / branch | **Layer 3** — `CheckAttribute Tool=…`, queue blocks |
+| Tool "not found" / never invoked | **Layer 2** (tool resolution) + **Layer 3** (`InvokeExternalResource` present?) |
+
+### Caveats
+- The agent's "system prompt" is the **static orchestration prompt** — there is **no stored per-call
+  chain-of-thought** beyond the AI agent trace's tool steps. Don't go hunting for a hidden reasoning log.
+- Contact Lens transcripts/traces only appear **after the call disconnects** and finishes processing
+  (~1–2 min). No trace at all usually means Contact Lens isn't enabled (Layer 2) or the instance has no
+  call-recording storage.
+- Turning on recording + Contact Lens adds cost — enable it to debug, and turn it back off for a quiet
+  demo if you care about the bill.
+
 ## Escalation semantics
 
 The orchestrator's default **Escalate** Return-to-Control tool ends the AI conversation and stores
