@@ -3,26 +3,93 @@
   "StartAction": "set-logging",
   "Metadata": {
     "entryPointPosition": {
-      "x": -182.4,
-      "y": -41.6
+      "x": -200,
+      "y": -60
     },
     "ActionMetadata": {
-      "025bb900-cb57-4cd9-8956-f649b9997474": {
+      "set-logging": {
         "position": {
-          "x": 798.4,
-          "y": 174.4
+          "x": -280,
+          "y": 260
         }
+      },
+      "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e": {
+        "position": {
+          "x": 560,
+          "y": 0
+        },
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "087f043f-ab89-4dd8-8142-c10b1d963159",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Complete"
+          },
+          {
+            "id": "3f23841e-f7a4-406c-b9cf-a397c41c0520",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Escalate"
+          }
+        ]
       },
       "end": {
         "position": {
-          "x": 1084,
-          "y": -20
+          "x": 1120,
+          "y": 0
+        }
+      },
+      "025bb900-cb57-4cd9-8956-f649b9997474": {
+        "position": {
+          "x": 840,
+          "y": 260
+        }
+      },
+      "d1e87681-d881-483a-8b5e-9af621fa4e12": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "parameters": {
+          "TextToSpeechVoice": {
+            "languageCode": "en-US"
+          }
+        },
+        "overrideConsoleVoice": true
+      },
+      "3cdfdbb6-f87a-42ba-8594-592edfb7e36a": {
+        "position": {
+          "x": 840,
+          "y": 0
+        },
+        "parameters": {
+          "Attributes": {
+            "escalationSummary": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicParams": [
+          "escalationSummary"
+        ]
+      },
+      "838cf8ce-1e91-48ff-b4bd-e8967ed58eae": {
+        "position": {
+          "x": 1120,
+          "y": 260
         }
       },
       "12d81f30-5ae1-4cea-a82f-0c0660c00837": {
         "position": {
-          "x": 812,
-          "y": -68
+          "x": 840,
+          "y": 520
         },
         "parameters": {
           "QueueId": {
@@ -33,34 +100,10 @@
           "text": "connect-nova-sonic-escalation"
         }
       },
-      "838cf8ce-1e91-48ff-b4bd-e8967ed58eae": {
-        "position": {
-          "x": 1090.4,
-          "y": 176.8
-        }
-      },
-      "set-logging": {
-        "position": {
-          "x": -234.4,
-          "y": 96.8
-        }
-      },
-      "d1e87681-d881-483a-8b5e-9af621fa4e12": {
-        "position": {
-          "x": -13.6,
-          "y": -75.2
-        },
-        "parameters": {
-          "TextToSpeechVoice": {
-            "languageCode": "en-US"
-          }
-        },
-        "overrideConsoleVoice": true
-      },
       "9e38d24f-42a5-452d-bf93-7d08e09b3b3f": {
         "position": {
-          "x": -238.4,
-          "y": 312.8
+          "x": -280,
+          "y": 520
         },
         "parameters": {
           "LambdaFunctionARN": {
@@ -71,8 +114,8 @@
       },
       "93381bac-a47b-4c0c-ad06-b6e6e509d6f2": {
         "position": {
-          "x": 19.2,
-          "y": 421.6
+          "x": 0,
+          "y": 520
         },
         "parameters": {
           "Attributes": {
@@ -85,49 +128,41 @@
           "customerName"
         ]
       },
-      "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e": {
+      "06754816-7f0b-460b-8e3e-ed1273642803": {
         "position": {
-          "x": 572,
-          "y": -84.8
+          "x": 280,
+          "y": 0
         },
-        "conditions": [],
-        "conditionMetadata": [
-          {
-            "id": "30143d5a-5e03-4e04-bf6c-363b60f44bcf",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Complete"
-          },
-          {
-            "id": "ccd81f2c-1f6a-4da4-aaf7-ce2db2a0a6f2",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Escalate"
+        "parameters": {
+          "LexV2Bot": {
+            "AliasArn": {
+              "displayName": "TestBotAlias",
+              "useLexBotDropdown": true,
+              "lexV2BotName": "connect-nova-sonic-demo-self-service"
+            }
           }
-        ]
-      },
-      "c1bc8628-40d4-4d46-a674-40d33a4e3dba": {
-        "position": {
-          "x": 3.2,
-          "y": 172
-        }
+        },
+        "useLexBotDropdown": true,
+        "lexV2BotName": "connect-nova-sonic-demo-self-service",
+        "lexV2BotAliasName": "TestBotAlias",
+        "conditionMetadata": []
       },
       "32c77334-bfbe-42df-94a7-64bcd0bbac44": {
         "position": {
-          "x": 564,
-          "y": 258.4
+          "x": 560,
+          "y": 260
+        }
+      },
+      "c1bc8628-40d4-4d46-a674-40d33a4e3dba": {
+        "position": {
+          "x": 0,
+          "y": 260
         }
       },
       "greet": {
         "position": {
-          "x": 280.8,
-          "y": 216.8
+          "x": 280,
+          "y": 260
         },
         "parameters": {
           "Text": {
@@ -136,12 +171,24 @@
         },
         "useDynamic": true
       },
-      "06754816-7f0b-460b-8e3e-ed1273642803": {
+      "4a2249bd-6752-4d8e-9433-acbf90900b79": {
         "position": {
-          "x": 342.4,
-          "y": -97.6
+          "x": 280,
+          "y": 520
         },
-        "conditionMetadata": []
+        "children": [
+          "2676db6c-1c01-4456-88e9-777fdb359db2"
+        ],
+        "fragments": {
+          "SetContactData": "2676db6c-1c01-4456-88e9-777fdb359db2"
+        }
+      },
+      "2676db6c-1c01-4456-88e9-777fdb359db2": {
+        "position": {
+          "x": 280,
+          "y": 520
+        },
+        "dynamicParams": []
       }
     },
     "Annotations": [],
@@ -152,6 +199,58 @@
     "hash": {}
   },
   "Actions": [
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "set-logging",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "d1e87681-d881-483a-8b5e-9af621fa4e12"
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.Lex.SessionAttributes.Tool"
+      },
+      "Identifier": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+        "Conditions": [
+          {
+            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Complete"
+              ]
+            }
+          },
+          {
+            "NextAction": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Escalate"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "end",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
@@ -170,19 +269,34 @@
       }
     },
     {
-      "Parameters": {},
-      "Identifier": "end",
-      "Type": "DisconnectParticipant",
-      "Transitions": {}
+      "Parameters": {
+        "TextToSpeechVoice": "Matthew",
+        "TextToSpeechEngine": "Generative",
+        "TextToSpeechStyle": "None"
+      },
+      "Identifier": "d1e87681-d881-483a-8b5e-9af621fa4e12",
+      "Type": "UpdateContactTextToSpeechVoice",
+      "Transitions": {
+        "NextAction": "9e38d24f-42a5-452d-bf93-7d08e09b3b3f",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
     },
     {
       "Parameters": {
-        "QueueId": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
+        "Attributes": {
+          "escalationSummary": "$.Lex.SessionAttributes.summary"
+        },
+        "TargetContact": "Current"
       },
-      "Identifier": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
-      "Type": "UpdateContactTargetQueue",
+      "Identifier": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
+      "Type": "UpdateContactAttributes",
       "Transitions": {
-        "NextAction": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
+        "NextAction": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -211,24 +325,12 @@
     },
     {
       "Parameters": {
-        "FlowLoggingBehavior": "Enabled"
+        "QueueId": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
       },
-      "Identifier": "set-logging",
-      "Type": "UpdateFlowLoggingBehavior",
+      "Identifier": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
+      "Type": "UpdateContactTargetQueue",
       "Transitions": {
-        "NextAction": "d1e87681-d881-483a-8b5e-9af621fa4e12"
-      }
-    },
-    {
-      "Parameters": {
-        "TextToSpeechVoice": "Matthew",
-        "TextToSpeechEngine": "Generative",
-        "TextToSpeechStyle": "None"
-      },
-      "Identifier": "d1e87681-d881-483a-8b5e-9af621fa4e12",
-      "Type": "UpdateContactTextToSpeechVoice",
-      "Transitions": {
-        "NextAction": "9e38d24f-42a5-452d-bf93-7d08e09b3b3f",
+        "NextAction": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -279,50 +381,20 @@
     },
     {
       "Parameters": {
-        "ComparisonValue": "$.Lex.SessionAttributes.Tool"
+        "Text": "I'm Amplifier, your virtual assistant. How can I help you today?",
+        "LexV2Bot": {
+          "AliasArn": "arn:aws:lex:us-west-2:044336301301:bot-alias/LQUVG1U5NC/TSTALIASID"
+        }
       },
-      "Identifier": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
-      "Type": "Compare",
+      "Identifier": "06754816-7f0b-460b-8e3e-ed1273642803",
+      "Type": "ConnectParticipantWithLexBot",
       "Transitions": {
         "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-        "Conditions": [
-          {
-            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
-            "Condition": {
-              "Operator": "Equals",
-              "Operands": [
-                "Complete"
-              ]
-            }
-          },
-          {
-            "NextAction": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
-            "Condition": {
-              "Operator": "Equals",
-              "Operands": [
-                "Escalate"
-              ]
-            }
-          }
-        ],
         "Errors": [
           {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
             "ErrorType": "NoMatchingCondition"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "SkipWhenDTMFBufferEnabled": "false",
-        "Text": "Thanks for calling Amplify Total Experience."
-      },
-      "Identifier": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
-      "Type": "MessageParticipant",
-      "Transitions": {
-        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
-        "Errors": [
+          },
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
             "ErrorType": "NoMatchingError"
@@ -350,12 +422,12 @@
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
-        "Text": "$.External.greeting"
+        "Text": "Thanks for calling Amplify Total Experience."
       },
-      "Identifier": "greet",
+      "Identifier": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
       "Type": "MessageParticipant",
       "Transitions": {
-        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
+        "NextAction": "4a2249bd-6752-4d8e-9433-acbf90900b79",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -366,23 +438,46 @@
     },
     {
       "Parameters": {
-        "StoreInput": "False",
-        "InputTimeLimitSeconds": "5",
-        "Text": "I'm Amplifier, your virtual assistant. How can I help you today?"
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "$.External.greeting"
       },
-      "Identifier": "06754816-7f0b-460b-8e3e-ed1273642803",
-      "Type": "GetParticipantInput",
+      "Identifier": "greet",
+      "Type": "MessageParticipant",
       "Transitions": {
-        "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
+        "NextAction": "4a2249bd-6752-4d8e-9433-acbf90900b79",
         "Errors": [
           {
-            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
-            "ErrorType": "InputTimeLimitExceeded"
-          },
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "WisdomAssistantArn": "arn:aws:wisdom:us-west-2:044336301301:assistant/b1e3dc48-d09d-4954-a7a1-4c1473d31153"
+      },
+      "Identifier": "4a2249bd-6752-4d8e-9433-acbf90900b79",
+      "Type": "CreateWisdomSession",
+      "Transitions": {
+        "NextAction": "2676db6c-1c01-4456-88e9-777fdb359db2",
+        "Errors": [
           {
-            "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
-            "ErrorType": "NoMatchingCondition"
-          },
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "WisdomSessionArn": "$.Wisdom.SessionArn"
+      },
+      "Identifier": "2676db6c-1c01-4456-88e9-777fdb359db2",
+      "Type": "UpdateContactData",
+      "Transitions": {
+        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
+        "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
             "ErrorType": "NoMatchingError"

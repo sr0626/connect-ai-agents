@@ -41,6 +41,39 @@ docs/        RUNBOOK.md (build guide + lessons learned), FUTURE-ENHANCEMENTS.md,
              return-refund-policy.pdf/.txt (knowledge-base source doc)
 ```
 
+## Call flow
+
+The inbound contact flow (`flows/connect-nova-sonic-inbound-ai-agent.json`). A `customer_lookup`
+Lambda personalizes the greeting from the caller's ANI; the **Connect assistant** block binds the
+Q-in-Connect domain (creating the session the Lex/Nova Sonic bot needs); the orchestration agent
+(**Amplifier**) runs inside *Get customer input* and hands back via the Lex session attribute `Tool`
+(`Complete` / `Escalate`). On escalate, the AI-written `escalationSummary` is stored for the human agent.
+
+```mermaid
+flowchart TD
+    A([Inbound call]) --> B[Set logging]
+    B --> C[Set voice<br/>Matthew · Generative · Nova Sonic]
+    C --> D[Invoke customer_lookup Lambda<br/>reads caller ANI]
+    D -- found --> E[Set customerName<br/>Play personalized greeting]
+    D -- error --> F[Play generic greeting]
+    E --> G[Connect assistant<br/>bind Q-in-Connect domain + create session]
+    F --> G
+    G --> H[Get customer input<br/>Lex bot = Amplifier orchestration agent]
+    H --> I{Check Tool attribute}
+    I -- Complete --> J[Play goodbye prompt]
+    I -- Escalate --> K[Set escalationSummary]
+    I -- error / no match --> L[Play error prompt]
+    K --> M[Set working queue<br/>escalation]
+    M --> N[Transfer to queue]
+    J --> Z([Disconnect])
+    L --> Z
+    N --> Z
+```
+
+> The greeting personalization (`customer_lookup` → `customerName`) and the warm-handoff summary
+> (`escalationSummary`) are the P1 enhancements; everything from *Connect assistant* through the
+> `Tool` check is the core agentic path. See [RUNBOOK §6/§9/§10](docs/RUNBOOK.md) for the build steps.
+
 ## Prerequisites
 
 - AWS account on **us-west-2**, on the full **Amazon Connect Customer** (next-gen) tier.

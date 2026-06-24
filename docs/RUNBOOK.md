@@ -389,6 +389,48 @@ profiles by editing `seed_customers` (then `terraform apply`) or writing to the 
 instruct the orchestrator to use the name and proactively reference the caller's latest order (it can
 already look up orders by ANI — see §ANI / the `order_lookup` Lambda).
 
+## 10. Warm handoff — escalate with an AI summary  (enhancement)
+
+> ✅ **Verified on a call** — escalating populated `escalationSummary` with the AI summary. The Escalate
+> tool's input param lands in **Lex session attributes** (`$.Lex.SessionAttributes.summary`), the same
+> place the flow reads `Tool`. Step C (agent-whisper so the human *hears* it on connect) is still **TODO**.
+
+Goal: when Amplifier escalates, the human agent receives a **one-line AI summary** of the caller's issue
++ order context, instead of starting cold ("please hold while I read your file"). No Terraform/Lambda —
+it reuses the **Escalate Return-to-Control** tool.
+
+**A. Escalate tool (AI agent designer → Amplifier → Tools → Escalate):**
+1. Add an **input parameter** `summary` (String) — description for the model: *"A concise one-sentence
+   summary of the caller's issue and any relevant order id/context, for the human agent."* (Optionally
+   also `reason`.)
+2. Edit the Escalate tool's **Instructions**: *"When you escalate, always populate `summary` with a
+   concise one-sentence summary of what the caller needs and any order id/context, so the human agent
+   has context."*
+3. **Publish** the agent; confirm **Default Self Service** points at the new version.
+
+**B. Flow — capture the summary (Escalate branch):**
+In the `Tool=Escalate` branch (after the Check-contact-attributes block, **before** Set working queue /
+Transfer to queue), add a **Set contact attributes** block:
+- `escalationSummary` = **Set dynamically → Namespace `Lex` → Session attributes → `summary`** (the tool
+  input param surfaces here, same place the flow reads `Tool`).
+- (optional) `escalationReason` = Lex session `reason`.
+
+Then continue: **Set working queue → Transfer to queue**. Save → Publish.
+
+**C. Make the human agent see/hear it:**
+- The `escalationSummary` contact attribute is now in **Contact search → Contact details** and available
+  to the agent workspace.
+- **The real "warm" wow — agent whisper:** create an **Agent Whisper** flow with a single Play prompt that
+  TTS-reads *"Incoming escalation. {summary}"* from `$.Attributes.escalationSummary`, and set it as the
+  escalation contact's **agent whisper**. The human agent then *hears* the summary the moment they
+  connect, before greeting the caller.
+
+**D. Test:** call → ask something out of scope (e.g. *"I need to talk to a person about my refund for
+ORD-2003"*) → the agent escalates → **Contact search → Contact details** shows `escalationSummary`
+populated (and the agent hears the whisper if configured). Note: a human must be staffed in the
+`…-escalation` queue's routing profile to actually receive the contact; the attribute is set regardless
+and visible in Contact search either way.
+
 ## Escalation semantics
 
 The orchestrator's default **Escalate** Return-to-Control tool ends the AI conversation and stores
@@ -402,6 +444,18 @@ agent screen-pop.
 
 Consolidated quick-reference. Most of these cost real time to discover; the platform is new (GA Nov
 2025) and the console/API terminology drifts.
+
+**Editing the flow can silently drop the AI agent**
+- Editing the contact flow (e.g. inserting blocks for the greeting/escalation) can **replace the
+  `ConnectParticipantWithLexBot` Get-customer-input block with a bare `GetParticipantInput`** and **drop
+  the `CreateWisdomSession` (Connect assistant) block**. Symptom: *every* call plays the greeting then
+  "goodbye" after ~5s — the Get-customer-input block times out (`InputTimeLimitExceeded`) because no bot
+  is attached and there's no Q-in-Connect session. Flow log shows `GetUserInput → Results: Timeout`.
+- A half-fixed state (bot re-attached but no Connect assistant) throws **`Amazon Lex needs active
+  session for Q In Connect … x-amz-lex:q-in-connect:session-arn`**.
+- After any flow edit, confirm both survive: `grep -c ConnectParticipantWithLexBot` and `grep -c
+  CreateWisdomSession` on the exported JSON should each be ≥ 1. The canonical
+  `flows/connect-nova-sonic-inbound-ai-agent.json` is the known-good reference to diff against.
 
 **Tier & enablement**
 - The instance is on the full **Connect Customer** tier (console *Customer* page shows ✓ + a
