@@ -349,6 +349,46 @@ the agentic path, but available if Layers 1–4 don't explain it.
 - Turning on recording + Contact Lens adds cost — enable it to debug, and turn it back off for a quiet
   demo if you care about the bill.
 
+## 9. Personalized greeting from the caller profile  (enhancement)
+
+Greets a **known caller by name** at the start of the call ("Hi Sateesh, thanks for calling …"),
+falling back to a generic greeting for unknown numbers. No new AI-agent tool — the contact flow calls
+a small Lambda at call start.
+
+**Terraform provides (already applied):**
+- A `customers` DynamoDB table (`terraform/customers.tf`) keyed by **phone (E.164 / ANI)** with
+  **`first_name`** + **`last_name`**, seeded from the `seed_customers` variable. Schemaless, so future
+  personalization fields (tier, preferences) need no migration.
+- A **`customer_lookup`** Lambda (`lambdas/customer_lookup/`) associated with the instance. It reads
+  the caller's ANI from the contact event, looks up the table, and returns flat fields plus a
+  ready-to-speak **`greeting`** (uses the **first name** only — "Hi Sateesh, …" — generic if not
+  found), along with `first_name`, `last_name`, and `customer_name` (full name, for the agent / later).
+  `terraform output customers_table_name` for the table name.
+
+**Console steps — wire it into the inbound flow** (Routing → Flows → the inbound flow). Insert near the
+start, **after Set logging + Set voice** and **before** the Get-customer-input (AI agent) block:
+1. **Invoke AWS Lambda function** → select `connect-nova-sonic-customer_lookup`. **No input params
+   needed** — it reads the ANI from the event. Response validation: **STRING MAP** (the response is
+   flat strings). Values land in `$.External.<key>`.
+2. **Set contact attributes** → set `customerName` = (dynamically) **External → `customer_name`**
+   (and optionally `customerKnown` = External → `found`). Persists the name for the agent / later use.
+3. **Replace the welcome prompt** (the old static "Thanks for calling …") with a **Play prompt / Message**
+   whose text is **Set dynamically → Namespace External → `greeting`** (`$.External.greeting`). This
+   speaks the personalized or generic line the Lambda composed.
+4. **Wire both Lambda outputs:** Success → continue to the greeting; **Error → a static generic
+   welcome** then continue, so a Lambda hiccup never drops the call. Connect every output.
+
+Order in the flow: `Set logging → Set voice → Invoke customer_lookup → Set contact attributes → Play
+$.External.greeting → Get customer input (AI agent) → …`.
+
+**Test:** call from a **seeded** number (e.g. `+12146817675`) → *"Hi Sateesh, thanks for calling
+Amplify Total Experience."* Call from an **un-seeded** number → the generic greeting. Add/inspect
+profiles by editing `seed_customers` (then `terraform apply`) or writing to the `customers` table.
+
+**Going further (P1 personalization):** pass `customerName` to the bot as a **session attribute** and
+instruct the orchestrator to use the name and proactively reference the caller's latest order (it can
+already look up orders by ANI — see §ANI / the `order_lookup` Lambda).
+
 ## Escalation semantics
 
 The orchestrator's default **Escalate** Return-to-Control tool ends the AI conversation and stores

@@ -48,6 +48,11 @@ output "orders_table_name" {
   value = aws_dynamodb_table.orders.name
 }
 
+output "customers_table_name" {
+  description = "Customer-profile table (phone/ANI -> name) for personalized greetings."
+  value       = aws_dynamodb_table.customers.name
+}
+
 output "admin_login" {
   description = "Default Connect admin username."
   value       = aws_connect_user.admin.name

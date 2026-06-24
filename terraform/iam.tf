@@ -34,6 +34,16 @@ data "aws_iam_policy_document" "lambda_dynamodb" {
     ]
   }
 
+  # customer_lookup only needs to read the customer-profile table.
+  statement {
+    sid = "CustomersTableAccess"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:Query",
+    ]
+    resources = [aws_dynamodb_table.customers.arn]
+  }
+
   # Use the CMK that encrypts the orders table and the function env vars.
   statement {
     sid = "UseCmk"

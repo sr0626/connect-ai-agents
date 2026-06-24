@@ -1,11 +1,14 @@
 # Copy to terraform.tfvars and adjust.
+# variables.tf has NO defaults — every value below is required (except the
+# seed_* maps, which keep their sample data as defaults in variables.tf).
 
 region                 = "us-west-2"
 project                = "connect-nova-sonic"
 connect_instance_alias = "connect-nova-sonic-demo" # must be globally unique
 agent_name             = "Amplifier"
 company_name           = "Amplify Total Experience"
-phone_country_code     = "US" # phone claiming is commented out in connect.tf
+claim_phone_number     = true  # phone claiming is commented out in connect.tf; flag is still required
+phone_country_code     = "US"
 lambda_runtime         = "python3.12"
 
 # CMK used for all encryption at rest (DynamoDB, Lambda env, CloudWatch Logs).
@@ -19,7 +22,7 @@ agent_username        = "demo.agent"
 agent_email           = "demo.agent@example.com"
 connect_user_password = "CHANGE-ME-To-A-Strong-One1"
 
-# Override the seeded sample orders if you like (see variables.tf for shape).
+# Optional: override the seeded sample data (defaults live in variables.tf).
 # seed_orders = {
 #   "ORD-2001" = {
 #     customer_name  = "Alex Doe"
@@ -29,4 +32,7 @@ connect_user_password = "CHANGE-ME-To-A-Strong-One1"
 #     amount         = 199.00
 #     refundable     = true
 #   }
+# }
+# seed_customers = {
+#   "+12065550199" = { first_name = "Alex", last_name = "Doe" }
 # }

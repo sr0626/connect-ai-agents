@@ -1,8 +1,11 @@
 locals {
-  # The two tools the AI agent calls, mirroring the demo (order lookup + refund).
+  # Functions deployed for the demo: the two AI-agent tools (order lookup +
+  # refund) plus customer_lookup, which the contact flow invokes at call start
+  # to greet a known caller by name.
   lambdas = {
-    order_lookup   = "order_lookup"
-    process_refund = "process_refund"
+    order_lookup    = "order_lookup"
+    process_refund  = "process_refund"
+    customer_lookup = "customer_lookup"
   }
 }
 
@@ -38,8 +41,10 @@ resource "aws_lambda_function" "tool" {
 
   environment {
     variables = {
-      ORDERS_TABLE   = aws_dynamodb_table.orders.name
-      PHONE_GSI_NAME = "by-phone"
+      ORDERS_TABLE    = aws_dynamodb_table.orders.name
+      PHONE_GSI_NAME  = "by-phone"
+      CUSTOMERS_TABLE = aws_dynamodb_table.customers.name
+      COMPANY_NAME    = var.company_name
     }
   }
 

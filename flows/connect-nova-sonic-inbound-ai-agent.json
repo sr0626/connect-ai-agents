@@ -7,64 +7,6 @@
       "y": -41.6
     },
     "ActionMetadata": {
-      "06754816-7f0b-460b-8e3e-ed1273642803": {
-        "position": {
-          "x": 308.8,
-          "y": -92.8
-        },
-        "children": [
-          "5df3852d-9e44-451b-8a8b-4d0ab326c883",
-          "bdea263c-5dcd-4f4e-a546-95e42b9bd76c"
-        ],
-        "parameters": {
-          "WisdomAssistantArn": {
-            "useAIAgentDropdown": true,
-            "aiAgentName": "Amplifier",
-            "aiAgentVersionArn": "arn:aws:wisdom:us-west-2:123456789012:ai-agent/b1e3dc48-d09d-4954-a7a1-4c1473d31153/5ab93c58-8bfb-43a7-a0c2-75991656539e:$LATEST"
-          }
-        },
-        "fragments": {
-          "SetContactData": "5df3852d-9e44-451b-8a8b-4d0ab326c883"
-        },
-        "useAIAgentDropdown": true,
-        "aiAgentName": "Amplifier",
-        "aiAgentVersionArn": "arn:aws:wisdom:us-west-2:123456789012:ai-agent/b1e3dc48-d09d-4954-a7a1-4c1473d31153/5ab93c58-8bfb-43a7-a0c2-75991656539e:$LATEST"
-      },
-      "5df3852d-9e44-451b-8a8b-4d0ab326c883": {
-        "position": {
-          "x": 308.8,
-          "y": -92.8
-        },
-        "dynamicParams": []
-      },
-      "bdea263c-5dcd-4f4e-a546-95e42b9bd76c": {
-        "position": {
-          "x": 308.8,
-          "y": -92.8
-        },
-        "parameters": {
-          "LexV2Bot": {
-            "AliasArn": {
-              "displayName": "TestBotAlias",
-              "useLexBotDropdown": true,
-              "lexV2BotName": "connect-nova-sonic-demo-self-service"
-            }
-          }
-        },
-        "dynamicMetadata": {
-          "x-amz-lex:q-in-connect:ai-agent-arn": false
-        },
-        "useLexBotDropdown": true,
-        "lexV2BotName": "connect-nova-sonic-demo-self-service",
-        "lexV2BotAliasName": "TestBotAlias",
-        "conditionMetadata": []
-      },
-      "set-logging": {
-        "position": {
-          "x": -211.2,
-          "y": 236
-        }
-      },
       "025bb900-cb57-4cd9-8956-f649b9997474": {
         "position": {
           "x": 798.4,
@@ -97,6 +39,12 @@
           "y": 176.8
         }
       },
+      "set-logging": {
+        "position": {
+          "x": -234.4,
+          "y": 96.8
+        }
+      },
       "d1e87681-d881-483a-8b5e-9af621fa4e12": {
         "position": {
           "x": -13.6,
@@ -109,6 +57,34 @@
         },
         "overrideConsoleVoice": true
       },
+      "9e38d24f-42a5-452d-bf93-7d08e09b3b3f": {
+        "position": {
+          "x": -238.4,
+          "y": 312.8
+        },
+        "parameters": {
+          "LambdaFunctionARN": {
+            "displayName": "connect-nova-sonic-customer_lookup"
+          }
+        },
+        "dynamicMetadata": {}
+      },
+      "93381bac-a47b-4c0c-ad06-b6e6e509d6f2": {
+        "position": {
+          "x": 19.2,
+          "y": 421.6
+        },
+        "parameters": {
+          "Attributes": {
+            "customerName": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicParams": [
+          "customerName"
+        ]
+      },
       "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e": {
         "position": {
           "x": 572,
@@ -117,7 +93,7 @@
         "conditions": [],
         "conditionMetadata": [
           {
-            "id": "29687349-2e23-4387-abc9-0b581e3d0c73",
+            "id": "30143d5a-5e03-4e04-bf6c-363b60f44bcf",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -126,7 +102,7 @@
             "value": "Complete"
           },
           {
-            "id": "61c79861-f44f-4766-8aa4-f9df1427a568",
+            "id": "ccd81f2c-1f6a-4da4-aaf7-ce2db2a0a6f2",
             "operator": {
               "name": "Equals",
               "value": "Equals",
@@ -136,6 +112,12 @@
           }
         ]
       },
+      "c1bc8628-40d4-4d46-a674-40d33a4e3dba": {
+        "position": {
+          "x": 3.2,
+          "y": 172
+        }
+      },
       "32c77334-bfbe-42df-94a7-64bcd0bbac44": {
         "position": {
           "x": 564,
@@ -144,87 +126,32 @@
       },
       "greet": {
         "position": {
-          "x": 70.4,
-          "y": 229.6
-        }
+          "x": 280.8,
+          "y": 216.8
+        },
+        "parameters": {
+          "Text": {
+            "useDynamic": true
+          }
+        },
+        "useDynamic": true
+      },
+      "06754816-7f0b-460b-8e3e-ed1273642803": {
+        "position": {
+          "x": 342.4,
+          "y": -97.6
+        },
+        "conditionMetadata": []
       }
     },
     "Annotations": [],
     "name": "connect-nova-sonic-inbound-ai-agent",
     "description": "Inbound Nova Sonic self-service agent (skeleton until wired by scripts/40)",
     "type": "contactFlow",
-    "status": "PUBLISHED",
+    "status": "published",
     "hash": {}
   },
   "Actions": [
-    {
-      "Parameters": {
-        "WisdomAssistantArn": "arn:aws:wisdom:us-west-2:123456789012:assistant/b1e3dc48-d09d-4954-a7a1-4c1473d31153"
-      },
-      "Identifier": "06754816-7f0b-460b-8e3e-ed1273642803",
-      "Type": "CreateWisdomSession",
-      "Transitions": {
-        "NextAction": "5df3852d-9e44-451b-8a8b-4d0ab326c883",
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "WisdomSessionArn": "$.Wisdom.SessionArn"
-      },
-      "Identifier": "5df3852d-9e44-451b-8a8b-4d0ab326c883",
-      "Type": "UpdateContactData",
-      "Transitions": {
-        "NextAction": "bdea263c-5dcd-4f4e-a546-95e42b9bd76c",
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "Text": "I'm Amplifier, your virtual assistant. How can I help you today?",
-        "LexV2Bot": {
-          "AliasArn": "arn:aws:lex:us-west-2:123456789012:bot-alias/LQUVG1U5NC/TSTALIASID"
-        },
-        "LexSessionAttributes": {
-          "x-amz-lex:q-in-connect:ai-agent-arn": "arn:aws:wisdom:us-west-2:123456789012:ai-agent/b1e3dc48-d09d-4954-a7a1-4c1473d31153/5ab93c58-8bfb-43a7-a0c2-75991656539e:$LATEST"
-        }
-      },
-      "Identifier": "bdea263c-5dcd-4f4e-a546-95e42b9bd76c",
-      "Type": "ConnectParticipantWithLexBot",
-      "Transitions": {
-        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-        "Errors": [
-          {
-            "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
-            "ErrorType": "NoMatchingCondition"
-          },
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "FlowLoggingBehavior": "Enabled"
-      },
-      "Identifier": "set-logging",
-      "Type": "UpdateFlowLoggingBehavior",
-      "Transitions": {
-        "NextAction": "d1e87681-d881-483a-8b5e-9af621fa4e12"
-      }
-    },
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
@@ -250,7 +177,7 @@
     },
     {
       "Parameters": {
-        "QueueId": "arn:aws:connect:us-west-2:123456789012:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
+        "QueueId": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
       },
       "Identifier": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
       "Type": "UpdateContactTargetQueue",
@@ -284,6 +211,16 @@
     },
     {
       "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "set-logging",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "d1e87681-d881-483a-8b5e-9af621fa4e12"
+      }
+    },
+    {
+      "Parameters": {
         "TextToSpeechVoice": "Matthew",
         "TextToSpeechEngine": "Generative",
         "TextToSpeechStyle": "None"
@@ -291,10 +228,50 @@
       "Identifier": "d1e87681-d881-483a-8b5e-9af621fa4e12",
       "Type": "UpdateContactTextToSpeechVoice",
       "Transitions": {
-        "NextAction": "greet",
+        "NextAction": "9e38d24f-42a5-452d-bf93-7d08e09b3b3f",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:us-west-2:044336301301:function:connect-nova-sonic-customer_lookup",
+        "InvocationTimeLimitSeconds": "3",
+        "InvocationType": "SYNCHRONOUS",
+        "ResponseValidation": {
+          "ResponseType": "STRING_MAP"
+        }
+      },
+      "Identifier": "9e38d24f-42a5-452d-bf93-7d08e09b3b3f",
+      "Type": "InvokeLambdaFunction",
+      "Transitions": {
+        "NextAction": "93381bac-a47b-4c0c-ad06-b6e6e509d6f2",
+        "Errors": [
+          {
+            "NextAction": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "customerName": "$.External.customer_name"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "93381bac-a47b-4c0c-ad06-b6e6e509d6f2",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "greet",
+        "Errors": [
+          {
+            "NextAction": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
             "ErrorType": "NoMatchingError"
           }
         ]
@@ -339,6 +316,23 @@
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "Thanks for calling Amplify Total Experience."
+      },
+      "Identifier": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
         "Text": "An unexpected error has occured.  Disconnecting now."
       },
       "Identifier": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -356,13 +350,39 @@
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
-        "Text": "Thanks for calling Amplify Total Experience."
+        "Text": "$.External.greeting"
       },
       "Identifier": "greet",
       "Type": "MessageParticipant",
       "Transitions": {
         "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
         "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "StoreInput": "False",
+        "InputTimeLimitSeconds": "5",
+        "Text": "I'm Amplifier, your virtual assistant. How can I help you today?"
+      },
+      "Identifier": "06754816-7f0b-460b-8e3e-ed1273642803",
+      "Type": "GetParticipantInput",
+      "Transitions": {
+        "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
+        "Errors": [
+          {
+            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
+            "ErrorType": "InputTimeLimitExceeded"
+          },
+          {
+            "NextAction": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
+            "ErrorType": "NoMatchingCondition"
+          },
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
             "ErrorType": "NoMatchingError"
