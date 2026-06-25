@@ -393,7 +393,8 @@ already look up orders by ANI — see §ANI / the `order_lookup` Lambda).
 
 > ✅ **Verified on a call** — escalating populated `escalationSummary` with the AI summary. The Escalate
 > tool's input param lands in **Lex session attributes** (`$.Lex.SessionAttributes.summary`), the same
-> place the flow reads `Tool`. Step C (agent-whisper so the human *hears* it on connect) is still **TODO**.
+> place the flow reads `Tool`. Step C (agent-whisper) is **built + wired** (flows in `flows/`), **pending
+> a live CCP test** (needs a staffed agent in the escalation queue).
 
 Goal: when Amplifier escalates, the human agent receives a **one-line AI summary** of the caller's issue
 + order context, instead of starting cold ("please hold while I read your file"). No Terraform/Lambda —
@@ -420,10 +421,17 @@ Then continue: **Set working queue → Transfer to queue**. Save → Publish.
 **C. Make the human agent see/hear it:**
 - The `escalationSummary` contact attribute is now in **Contact search → Contact details** and available
   to the agent workspace.
-- **The real "warm" wow — agent whisper:** create an **Agent Whisper** flow with a single Play prompt that
-  TTS-reads *"Incoming escalation. {summary}"* from `$.Attributes.escalationSummary`, and set it as the
-  escalation contact's **agent whisper**. The human agent then *hears* the summary the moment they
-  connect, before greeting the caller.
+- **The real "warm" wow — agent whisper** (built; see `flows/escalation-agent-whisper.json`):
+  1. Routing → Flows → **Create flow ▼ → Create agent whisper flow** → name `escalation-agent-whisper`.
+     Build: **Play prompt** static *"Incoming escalation."* → **Play prompt** dynamic → end.
+     ⚠️ The dynamic prompt must be **Text-to-speech → Set dynamically → User defined → `escalationSummary`**
+     (the **contact** attribute, NOT the Lex `summary`; and **not** an audio *Prompt*/`PromptId` — that
+     plays nothing and errors).
+  2. In the **inbound flow's Escalate branch**, add a **Set whisper flow** block (serializes as
+     `UpdateContactEventHooks` → `AgentWhisper`) between `Set escalationSummary` and `Set working queue`,
+     pointing **Agent whisper** at `escalation-agent-whisper`. Save → Publish.
+  3. Test: needs a real agent staffed in the `…-escalation` queue (CCP, Available, routing profile
+     includes that queue). On connect the agent *hears* "Incoming escalation. <summary>" before the caller.
 
 **D. Test:** call → ask something out of scope (e.g. *"I need to talk to a person about my refund for
 ORD-2003"*) → the agent escalates → **Contact search → Contact details** shows `escalationSummary`

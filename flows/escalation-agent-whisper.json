@@ -1,0 +1,84 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "569362d4-fb5e-45c7-a789-00442644280e",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "f3cc594a-1307-4ebd-9b1c-e5470974a542": {
+        "position": {
+          "x": 404.8,
+          "y": 334.4
+        }
+      },
+      "569362d4-fb5e-45c7-a789-00442644280e": {
+        "position": {
+          "x": 164.8,
+          "y": 53.6
+        }
+      },
+      "84554f76-191a-4306-8869-cb1370d40a6f": {
+        "position": {
+          "x": 406.4,
+          "y": 51.2
+        },
+        "parameters": {
+          "Text": {
+            "useDynamic": true
+          }
+        },
+        "useDynamic": true
+      }
+    },
+    "Annotations": [],
+    "name": "escalation-agent-whisper",
+    "description": "",
+    "type": "agentWhisper",
+    "status": "published",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {},
+      "Identifier": "f3cc594a-1307-4ebd-9b1c-e5470974a542",
+      "Type": "EndFlowExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "Incoming escalation."
+      },
+      "Identifier": "569362d4-fb5e-45c7-a789-00442644280e",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "84554f76-191a-4306-8869-cb1370d40a6f",
+        "Errors": [
+          {
+            "NextAction": "f3cc594a-1307-4ebd-9b1c-e5470974a542",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "$.Attributes.escalationSummary"
+      },
+      "Identifier": "84554f76-191a-4306-8869-cb1370d40a6f",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "f3cc594a-1307-4ebd-9b1c-e5470974a542",
+        "Errors": [
+          {
+            "NextAction": "f3cc594a-1307-4ebd-9b1c-e5470974a542",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    }
+  ]
+}

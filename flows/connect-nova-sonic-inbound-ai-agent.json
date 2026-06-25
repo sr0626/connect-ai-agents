@@ -7,48 +7,28 @@
       "y": -60
     },
     "ActionMetadata": {
+      "4a2249bd-6752-4d8e-9433-acbf90900b79": {
+        "position": {
+          "x": 280,
+          "y": 520
+        },
+        "children": [
+          "e7a97f12-5613-4506-9d5a-3223d7f7765b"
+        ],
+        "fragments": {
+          "SetContactData": "e7a97f12-5613-4506-9d5a-3223d7f7765b"
+        }
+      },
+      "e7a97f12-5613-4506-9d5a-3223d7f7765b": {
+        "position": {
+          "x": 280,
+          "y": 520
+        },
+        "dynamicParams": []
+      },
       "set-logging": {
         "position": {
           "x": -280,
-          "y": 260
-        }
-      },
-      "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e": {
-        "position": {
-          "x": 560,
-          "y": 0
-        },
-        "conditions": [],
-        "conditionMetadata": [
-          {
-            "id": "087f043f-ab89-4dd8-8142-c10b1d963159",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Complete"
-          },
-          {
-            "id": "3f23841e-f7a4-406c-b9cf-a397c41c0520",
-            "operator": {
-              "name": "Equals",
-              "value": "Equals",
-              "shortDisplay": "="
-            },
-            "value": "Escalate"
-          }
-        ]
-      },
-      "end": {
-        "position": {
-          "x": 1120,
-          "y": 0
-        }
-      },
-      "025bb900-cb57-4cd9-8956-f649b9997474": {
-        "position": {
-          "x": 840,
           "y": 260
         }
       },
@@ -63,42 +43,6 @@
           }
         },
         "overrideConsoleVoice": true
-      },
-      "3cdfdbb6-f87a-42ba-8594-592edfb7e36a": {
-        "position": {
-          "x": 840,
-          "y": 0
-        },
-        "parameters": {
-          "Attributes": {
-            "escalationSummary": {
-              "useDynamic": true
-            }
-          }
-        },
-        "dynamicParams": [
-          "escalationSummary"
-        ]
-      },
-      "838cf8ce-1e91-48ff-b4bd-e8967ed58eae": {
-        "position": {
-          "x": 1120,
-          "y": 260
-        }
-      },
-      "12d81f30-5ae1-4cea-a82f-0c0660c00837": {
-        "position": {
-          "x": 840,
-          "y": 520
-        },
-        "parameters": {
-          "QueueId": {
-            "displayName": "connect-nova-sonic-escalation"
-          }
-        },
-        "queue": {
-          "text": "connect-nova-sonic-escalation"
-        }
       },
       "9e38d24f-42a5-452d-bf93-7d08e09b3b3f": {
         "position": {
@@ -147,12 +91,6 @@
         "lexV2BotAliasName": "TestBotAlias",
         "conditionMetadata": []
       },
-      "32c77334-bfbe-42df-94a7-64bcd0bbac44": {
-        "position": {
-          "x": 560,
-          "y": 260
-        }
-      },
       "c1bc8628-40d4-4d46-a674-40d33a4e3dba": {
         "position": {
           "x": 0,
@@ -171,24 +109,104 @@
         },
         "useDynamic": true
       },
-      "4a2249bd-6752-4d8e-9433-acbf90900b79": {
+      "025bb900-cb57-4cd9-8956-f649b9997474": {
         "position": {
-          "x": 280,
-          "y": 520
-        },
-        "children": [
-          "2676db6c-1c01-4456-88e9-777fdb359db2"
-        ],
-        "fragments": {
-          "SetContactData": "2676db6c-1c01-4456-88e9-777fdb359db2"
+          "x": 840,
+          "y": 260
         }
       },
-      "2676db6c-1c01-4456-88e9-777fdb359db2": {
+      "end": {
         "position": {
-          "x": 280,
-          "y": 520
+          "x": 1230.4,
+          "y": 20.8
+        }
+      },
+      "838cf8ce-1e91-48ff-b4bd-e8967ed58eae": {
+        "position": {
+          "x": 1120,
+          "y": 260
+        }
+      },
+      "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e": {
+        "position": {
+          "x": 560,
+          "y": 0
         },
-        "dynamicParams": []
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "f3e9eabb-e217-49ae-9289-7e65388910a2",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Complete"
+          },
+          {
+            "id": "1bf79fca-adcd-446c-a99a-b0a06987b9c3",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Escalate"
+          }
+        ]
+      },
+      "32c77334-bfbe-42df-94a7-64bcd0bbac44": {
+        "position": {
+          "x": 560,
+          "y": 260
+        }
+      },
+      "12d81f30-5ae1-4cea-a82f-0c0660c00837": {
+        "position": {
+          "x": 1064,
+          "y": 509.6
+        },
+        "parameters": {
+          "QueueId": {
+            "displayName": "connect-nova-sonic-escalation"
+          }
+        },
+        "queue": {
+          "text": "connect-nova-sonic-escalation"
+        }
+      },
+      "3cdfdbb6-f87a-42ba-8594-592edfb7e36a": {
+        "position": {
+          "x": 840,
+          "y": 0
+        },
+        "parameters": {
+          "Attributes": {
+            "escalationSummary": {
+              "useDynamic": true
+            }
+          }
+        },
+        "dynamicParams": [
+          "escalationSummary"
+        ]
+      },
+      "8ee39973-479f-46c1-bcb2-1825c18e5926": {
+        "position": {
+          "x": 808,
+          "y": 488.8
+        },
+        "parameters": {
+          "EventHooks": {
+            "AgentWhisper": {
+              "displayName": "escalation-agent-whisper"
+            }
+          }
+        },
+        "contactFlow": {
+          "text": "escalation-agent-whisper",
+          "id": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/contact-flow/33b0795a-2913-4628-8ab0-a69edf01d9e3"
+        },
+        "customerOrAgent": false
       }
     },
     "Annotations": [],
@@ -201,71 +219,44 @@
   "Actions": [
     {
       "Parameters": {
+        "WisdomAssistantArn": "arn:aws:wisdom:us-west-2:044336301301:assistant/b1e3dc48-d09d-4954-a7a1-4c1473d31153"
+      },
+      "Identifier": "4a2249bd-6752-4d8e-9433-acbf90900b79",
+      "Type": "CreateWisdomSession",
+      "Transitions": {
+        "NextAction": "e7a97f12-5613-4506-9d5a-3223d7f7765b",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "WisdomSessionArn": "$.Wisdom.SessionArn"
+      },
+      "Identifier": "e7a97f12-5613-4506-9d5a-3223d7f7765b",
+      "Type": "UpdateContactData",
+      "Transitions": {
+        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
         "FlowLoggingBehavior": "Enabled"
       },
       "Identifier": "set-logging",
       "Type": "UpdateFlowLoggingBehavior",
       "Transitions": {
         "NextAction": "d1e87681-d881-483a-8b5e-9af621fa4e12"
-      }
-    },
-    {
-      "Parameters": {
-        "ComparisonValue": "$.Lex.SessionAttributes.Tool"
-      },
-      "Identifier": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
-      "Type": "Compare",
-      "Transitions": {
-        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-        "Conditions": [
-          {
-            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
-            "Condition": {
-              "Operator": "Equals",
-              "Operands": [
-                "Complete"
-              ]
-            }
-          },
-          {
-            "NextAction": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
-            "Condition": {
-              "Operator": "Equals",
-              "Operands": [
-                "Escalate"
-              ]
-            }
-          }
-        ],
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingCondition"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {},
-      "Identifier": "end",
-      "Type": "DisconnectParticipant",
-      "Transitions": {}
-    },
-    {
-      "Parameters": {
-        "SkipWhenDTMFBufferEnabled": "false",
-        "Text": "Thank you for calling.  Good bye."
-      },
-      "Identifier": "025bb900-cb57-4cd9-8956-f649b9997474",
-      "Type": "MessageParticipant",
-      "Transitions": {
-        "NextAction": "end",
-        "Errors": [
-          {
-            "NextAction": "end",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
       }
     },
     {
@@ -278,59 +269,6 @@
       "Type": "UpdateContactTextToSpeechVoice",
       "Transitions": {
         "NextAction": "9e38d24f-42a5-452d-bf93-7d08e09b3b3f",
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "Attributes": {
-          "escalationSummary": "$.Lex.SessionAttributes.summary"
-        },
-        "TargetContact": "Current"
-      },
-      "Identifier": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
-      "Type": "UpdateContactAttributes",
-      "Transitions": {
-        "NextAction": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {},
-      "Identifier": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
-      "Type": "TransferContactToQueue",
-      "Transitions": {
-        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-        "Errors": [
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "QueueAtCapacity"
-          },
-          {
-            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "QueueId": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
-      },
-      "Identifier": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
-      "Type": "UpdateContactTargetQueue",
-      "Transitions": {
-        "NextAction": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -405,23 +343,6 @@
     {
       "Parameters": {
         "SkipWhenDTMFBufferEnabled": "false",
-        "Text": "An unexpected error has occured.  Disconnecting now."
-      },
-      "Identifier": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
-      "Type": "MessageParticipant",
-      "Transitions": {
-        "NextAction": "end",
-        "Errors": [
-          {
-            "NextAction": "end",
-            "ErrorType": "NoMatchingError"
-          }
-        ]
-      }
-    },
-    {
-      "Parameters": {
-        "SkipWhenDTMFBufferEnabled": "false",
         "Text": "Thanks for calling Amplify Total Experience."
       },
       "Identifier": "c1bc8628-40d4-4d46-a674-40d33a4e3dba",
@@ -455,12 +376,106 @@
     },
     {
       "Parameters": {
-        "WisdomAssistantArn": "arn:aws:wisdom:us-west-2:044336301301:assistant/b1e3dc48-d09d-4954-a7a1-4c1473d31153"
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "Thank you for calling.  Good bye."
       },
-      "Identifier": "4a2249bd-6752-4d8e-9433-acbf90900b79",
-      "Type": "CreateWisdomSession",
+      "Identifier": "025bb900-cb57-4cd9-8956-f649b9997474",
+      "Type": "MessageParticipant",
       "Transitions": {
-        "NextAction": "2676db6c-1c01-4456-88e9-777fdb359db2",
+        "NextAction": "end",
+        "Errors": [
+          {
+            "NextAction": "end",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "end",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {},
+      "Identifier": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
+      "Type": "TransferContactToQueue",
+      "Transitions": {
+        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "QueueAtCapacity"
+          },
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.Lex.SessionAttributes.Tool"
+      },
+      "Identifier": "bd06e7d4-3aeb-42a0-91b1-437b91d52b1e",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+        "Conditions": [
+          {
+            "NextAction": "025bb900-cb57-4cd9-8956-f649b9997474",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Complete"
+              ]
+            }
+          },
+          {
+            "NextAction": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Escalate"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "An unexpected error has occured.  Disconnecting now."
+      },
+      "Identifier": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "end",
+        "Errors": [
+          {
+            "NextAction": "end",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "QueueId": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/queue/7242fad6-af24-4571-8537-6cf15d3fd90d"
+      },
+      "Identifier": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
+      "Type": "UpdateContactTargetQueue",
+      "Transitions": {
+        "NextAction": "838cf8ce-1e91-48ff-b4bd-e8967ed58eae",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
@@ -471,12 +486,38 @@
     },
     {
       "Parameters": {
-        "WisdomSessionArn": "$.Wisdom.SessionArn"
+        "Attributes": {
+          "escalationSummary": "$.Lex.SessionAttributes.summary"
+        },
+        "TargetContact": "Current"
       },
-      "Identifier": "2676db6c-1c01-4456-88e9-777fdb359db2",
-      "Type": "UpdateContactData",
+      "Identifier": "3cdfdbb6-f87a-42ba-8594-592edfb7e36a",
+      "Type": "UpdateContactAttributes",
       "Transitions": {
-        "NextAction": "06754816-7f0b-460b-8e3e-ed1273642803",
+        "NextAction": "8ee39973-479f-46c1-bcb2-1825c18e5926",
+        "Errors": [
+          {
+            "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "EventHooks": {
+          "AgentWhisper": "arn:aws:connect:us-west-2:044336301301:instance/f86f5851-d79b-4187-b1f0-3d8e74448f1e/contact-flow/33b0795a-2913-4628-8ab0-a69edf01d9e3"
+        },
+        "EventHooksConfiguration": {
+          "AgentWhisper": {
+            "DisableExecution": "false"
+          }
+        }
+      },
+      "Identifier": "8ee39973-479f-46c1-bcb2-1825c18e5926",
+      "Type": "UpdateContactEventHooks",
+      "Transitions": {
+        "NextAction": "12d81f30-5ae1-4cea-a82f-0c0660c00837",
         "Errors": [
           {
             "NextAction": "32c77334-bfbe-42df-94a7-64bcd0bbac44",
