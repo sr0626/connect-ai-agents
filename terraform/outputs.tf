@@ -89,3 +89,7 @@ output "kb_s3_uri" {
   description = "Full s3:// URI to give the Q-in-Connect knowledge base S3 source."
   value       = "s3://${aws_s3_bucket.kb.bucket}/${aws_s3_object.policy_doc.key}"
 }
+
+# AI Guardrail (P1 #3) is NOT Terraform-managed — the awscc/Cloud Control
+# AWS::Wisdom::AIGuardrail handler fails server-side. It is created by
+# scripts/guardrail.sh via the qconnect API. See docs/RUNBOOK.md §11.

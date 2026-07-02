@@ -138,9 +138,11 @@ with a symptom→layer triage table.
 
 ## Roadmap
 
-Knowledge-base policy Q&A, caller-ID lookup, and the observability/debugging guide are **done** (see
-RUNBOOK §7–§8 and the `order_lookup` Lambda). Remaining ideas — an order-cancellation tool and a
-multi-document knowledge base — are in **[docs/FUTURE-ENHANCEMENTS.md](docs/FUTURE-ENHANCEMENTS.md)**.
+Knowledge-base policy Q&A, caller-ID lookup, the observability/debugging guide, and **AI Guardrails**
+(denied topics + PII + profanity/prompt-injection, via `scripts/guardrail.sh` — see RUNBOOK §11; note
+contextual grounding isn't allowed on orchestration agents) are **done** (see RUNBOOK §7–§8, §11 and the
+`order_lookup` Lambda). Remaining ideas — an order-cancellation tool and a multi-document knowledge
+base — are in **[docs/FUTURE-ENHANCEMENTS.md](docs/FUTURE-ENHANCEMENTS.md)**.
 
 ## Teardown
 

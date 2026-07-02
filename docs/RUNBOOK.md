@@ -439,6 +439,58 @@ populated (and the agent hears the whisper if configured). Note: a human must be
 `…-escalation` queue's routing profile to actually receive the contact; the attribute is set regardless
 and visible in Contact search either way.
 
+## 11. AI Guardrails — denied topics, PII, profanity  (enhancement)
+
+> Goal: a compliance/trust "wow" — Amplifier stays **on-scope** (no legal/medical/financial advice),
+> **blocks spoken card/SSN**, and filters **profanity / prompt-injection**. (No-hallucination — answering
+> only from the KB — is handled by the **Retrieve tool** instruction in §7, not this guardrail; see note.)
+
+The guardrail is created by **`scripts/guardrail.sh`** (via the qconnect API), **not** Terraform — the
+`awscc`/Cloud Control `AWS::Wisdom::AIGuardrail` handler fails server-side (see the gotcha below), and
+this matches the rest of the agentic layer (assistant, AI agent, KB integration) which is also
+console/CLI-managed. The script auto-discovers the assistant from `terraform output`; the only console
+step is **attaching the guardrail to the Amplifier agent**.
+
+**A. Create the guardrail:**
+```
+./scripts/guardrail.sh create      # idempotent; prints the guardrail id
+./scripts/guardrail.sh status      # re-print the id any time
+```
+Three policy areas live in the one guardrail (see the script): denied topics, sensitive-info/PII, and
+word + content filters. **Contextual grounding is intentionally omitted** — Connect rejects a grounding
+policy on an ORCHESTRATION agent (*"Contextual grounding guardrail policy is not allowed for ORCHESTRATION
+AIAgent"*); grounding only applies to answer-recommendation/retrieval agents.
+
+**B. Attach to Amplifier (console — the agent is designer-built):**
+1. Admin site → **AI agent designer → AI agents → Amplifier** → edit.
+2. Set the **AI Guardrail** to `connect-nova-sonic-demo-guardrail` (the name the script created).
+3. **Publish** the agent; confirm **Default Self Service** points at the new version.
+
+**C. Test on a call:**  <!-- TODO(validate): guardrail attached + published (v1) but NOT yet verified on a live call — run these when convenient. -->
+> ⏳ **Pending validation:** the guardrail is created (`scripts/guardrail.sh`) and attached + published on
+> Amplifier, but the on-call behavior below hasn't been verified yet.
+- *Denied topic:* *"should I invest my refund in stocks?"* → polite refusal (the blocked-output message).
+- *PII:* read out a fake card number → it's blocked from the transcript/response.
+- *Profanity / prompt-injection:* abusive input or *"ignore your instructions and…"* → filtered.
+- *No-hallucination (not this guardrail):* ask a policy question not in the KB → the agent should decline
+  rather than invent an answer — this is the **Retrieve tool** instruction from §7, verify it still holds.
+
+**Teardown:** `./scripts/guardrail.sh delete` (also remove it from Amplifier → Publish). `destroy.sh`
+does this automatically before deleting the assistant.
+
+> Gotchas: **Contextual grounding is not allowed on ORCHESTRATION agents** — attaching a guardrail that
+> has a grounding policy fails at `updateAIAgent`; the script omits it (no-hallucination is the Retrieve
+> tool's job here, §7). `PROMPT_ATTACK` only has an **input** filter — `outputStrength` must be `NONE`.
+> Order id + phone are intentionally **not** in the PII block list (the bot needs them for lookups).
+>
+> **⚠️ Why not Terraform (awscc) — opaque errors + quota.** The native `awscc_wisdom_ai_guardrail`
+> (Cloud Control) resource fails on create with `AWS SDK Go Service Operation Incomplete …
+> GeneralServiceException` — the handler is broken server-side, and Cloud Control masks the real cause.
+> The **direct qconnect API creates the identical config cleanly**, so we use `scripts/guardrail.sh`.
+> One real cause it was also masking: the **AI Guardrail service quota is low (~5 per assistant)** — if
+> `create` ever returns `ServiceQuotaExceededException`, delete stragglers
+> (`aws qconnect list-ai-guardrails --assistant-id <id>` → `delete-ai-guardrail`); we only need **one**.
+
 ## Escalation semantics
 
 The orchestrator's default **Escalate** Return-to-Control tool ends the AI conversation and stores
@@ -546,3 +598,21 @@ Consolidated quick-reference. Most of these cost real time to discover; the plat
 - For the agent's tools to show **Sufficient** (and to actually fire), the relevant security
   profile(s) must grant the tool — and for agent-assist/testing, the **human** user's profile must
   match the AI agent's.
+
+**AI Guardrails (§11)**
+- **Contextual grounding is NOT allowed on an ORCHESTRATION agent.** Attaching a guardrail that
+  contains a grounding policy fails at `updateAIAgent`: *"Contextual grounding guardrail policy is not
+  allowed for ORCHESTRATION AIAgent."* Grounding is only for answer-recommendation/retrieval agents —
+  so `scripts/guardrail.sh` omits it, and no-hallucination stays the **Retrieve tool** instruction's
+  job (§7). The other areas (denied topics, PII, profanity + content filters) attach fine.
+- **The Terraform/`awscc` path for the guardrail is broken.** `awscc_wisdom_ai_guardrail` (Cloud
+  Control `AWS::Wisdom::AIGuardrail`) fails on create with `AWS SDK Go Service Operation Incomplete …
+  GeneralServiceException` — a server-side handler bug, and Cloud Control **masks the real error**. The
+  **direct qconnect API creates the identical config cleanly**, so we manage it with
+  `scripts/guardrail.sh` (create/delete/status), consistent with the rest of the CLI-managed agentic
+  layer. When Cloud Control is opaque, reproduce via `aws qconnect create-ai-guardrail` to see the true
+  error.
+- **AI Guardrail service quota is low (~5 per assistant).** Leftover/test guardrails exhaust it; a
+  create then returns `ServiceQuotaExceededException` (also masked as `GeneralServiceException` via
+  Cloud Control). We only need **one** — clean up with `aws qconnect list-ai-guardrails` →
+  `delete-ai-guardrail` (or `scripts/guardrail.sh delete`).

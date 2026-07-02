@@ -15,6 +15,12 @@ escalate). Three have shipped; what's left is open backlog.
 - **Observability — "debugging a call".** A layered guide (Contact search → AI agent trace/transcript
   via Contact Lens → flow logs → Lambda `EVENT/PARAMS/RESULT` → Lex logs) with a symptom→layer triage
   table. **[RUNBOOK §8](RUNBOOK.md)**.
+- **AI Guardrails.** Native Q-in-Connect AI Guardrail on the Amplifier agent covering denied topics (no
+  legal/medical/financial advice), PII (block spoken card/SSN/bank/PIN), and profanity + prompt-injection
+  filters. (Contextual grounding is **not** allowed on orchestration agents, so no-hallucination stays the
+  Retrieve tool's job — §7.) Created via **`scripts/guardrail.sh`** (qconnect API) — *not* Terraform: the
+  `awscc`/Cloud Control `AWS::Wisdom::AIGuardrail` handler fails server-side. Attach + demo in
+  **[RUNBOOK §11](RUNBOOK.md)**.
 
 ## Open backlog — prioritized for a management demo
 
@@ -32,9 +38,20 @@ Ordered by **wow-per-effort** and how much each leans on what's already built. E
    summary + order context into a contact attribute so the human agent gets a screen-pop and the caller
    never repeats themselves. The Escalate Return-to-Control tool already carries input params — just set
    + display them.
-3. **Guardrails / "it won't make things up."** 🟢 Attach **Connect/Bedrock AI Guardrails** to the agent
-   and demo it refusing to invent a policy or a wrong refund window — answering only from the KB.
-   Compliance + trust; native in the AI agent designer.
+### Next up — prioritized after guardrails (2026-07-01)
+The immediate `main`-project priorities, ahead of the P2/P3 items below.
+A. **Enable Customer Profiles.** 🟡 Turn on Amazon Connect **Customer Profiles**: a native domain that
+   unifies caller identity + contact history (and can ingest orders) into a profile surfaced to agents
+   and usable from flows/Lambda. Natural upgrade from the custom `customers` DynamoDB table +
+   `customer_lookup` Lambda — could back the personalized greeting (#1) and order lookup with native
+   profiles / calculated attributes. Terraform: `aws_customerprofiles_domain` (+ object types /
+   integrations).
+B. **Third-party app to manage the instance, governed by Connect security profiles.** 🔴 An app whose
+   access is authorized by **Connect security-profile permissions**, exposing operational toggles for
+   the instance. **Start with: switch the flow's TTS voice** (e.g. store the chosen Nova Sonic voice in
+   a config the flow reads *dynamically* — replacing today's static Set-voice block — and let the app
+   write it). Scales to more instance-management toggles later. Bigger lift: new app + auth + the
+   dynamic-voice flow change.
 
 ### P2 — high management value (ROI + tangible actions)
 4. **Live containment dashboard.** 🟡 QuickSight/CloudWatch view over Contact Lens data: calls handled,

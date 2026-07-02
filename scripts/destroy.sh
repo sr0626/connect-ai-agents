@@ -63,6 +63,14 @@ if aws qconnect help >/dev/null 2>&1; then
       log "Deleted AI prompt $id"
     done
 
+    # Delete any AI guardrails (RUNBOOK §11, created by scripts/guardrail.sh).
+    guardrail_ids="$(AWSCLI qconnect list-ai-guardrails --assistant-id "$assistant_id" \
+      --query 'aiGuardrailSummaries[].aiGuardrailId' --output text 2>/dev/null || true)"
+    for id in $guardrail_ids; do
+      AWSCLI qconnect delete-ai-guardrail --assistant-id "$assistant_id" --ai-guardrail-id "$id" || true
+      log "Deleted AI guardrail $id"
+    done
+
     # Detach any knowledge base associated to the assistant (the policy-Q&A KB
     # from RUNBOOK §7), else delete-assistant fails. The KB itself is account-
     # level (deleted further below); here we just remove the association.
